@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>فاکتور - A4</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #f0f0f0;
+        font-family: Arial, Helvetica, sans-serif;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .a4-page {
+        width: 794px;
+        height: fit-content;
+        box-sizing: border-box;
+        margin: 20px auto;
+        background: #fff;
+        border: 1px solid #000;
+        border-radius: 0;
+        padding: 20mm;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      header img {
+        max-width: 80px;
+        height: auto;
+        object-fit: contain;
+      }
+
+      header h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      header p {
+        margin: 2px 0;
+        font-size: 12px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Tahoma, Arial, sans-serif;
+        font-size: 14px;
+        margin: 20px 0;
+      }
+      td,
+      th {
+        border: 1px solid black;
+        padding: 8px;
+        vertical-align: top;
+      }
+      .header-row td {
+        border: none;
+        font-weight: bold;
+      }
+      .header-row {
+        text-align: right;
+        border: 1px solid black;
+      }
+
+      section {
+        margin-top: 12px;
+        flex: 1;
+      }
+
+      section h3 {
+        margin: 6px 0;
+      }
+      section ul {
+        margin: 6px 0 12px 0;
+        padding-inline-start: 18px;
+      }
+      section p {
+        margin: 6px 0;
+        font-size: 14px;
+      }
+
+      .paymentNumber {
+        font-weight: bold;
+      }
+      .sign {
+        margin-top: 30px;
+      }
+
+      footer {
+        margin-top: 12px;
+      }
+      footer div {
+        display: flex;
+        align-items: center;
+        font-weight: 700;
+        gap: 8px;
+        margin-top: 6px;
+      }
+      footer div img {
+        width: 24px;
+        height: 24px;
+      }
+
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      @media print {
+        html,
+        body {
+          background: white;
+        }
+        .a4-page {
+          margin: 0;
+          border: 1px solid #000;
+          box-shadow: none;
+          padding: 15mm;
+          page-break-after: always;
+        }
+
+        header,
+        section,
+        footer {
+          break-inside: avoid;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .a4-page {
+          width: calc(100vw - 20px);
+          height: auto;
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="a4-page">
+      <header>
+        <div>
+          <img src="{{ logo_data }}" alt="logo" />
+          <h3>کانون آگهی و تبلیغات بازارسازان هوشمند پویا</h3>
+          <p>دارای مجوز رسمی از وزارت فرهنگ و ارشاد اسلامی</p>
+          <p>شماره مجوز: {{ object.license_number }}</p>
+        </div>
+        <div style="text-align: left">
+          <p>شماره فاکتور: {{ object.invoice_number }}</p>
+          <p>تاریخ: {{ object.date }}</p>
+        </div>
+      </header>
+
+      <table>
+        <tr class="header-row">
+          <td colspan="2">نام صنف: {{ object.business_name }}</td>
+          <td colspan="2">مدیریت: {{ object.agency_manager }}</td>
+        </tr>
+        <tr class="header-row">
+          <td colspan="4">آدرس: —</td>
+        </tr>
+        <tr class="header-row">
+          <td colspan="4">تماس: —</td>
+        </tr>
+
+        <tr>
+          <th>نام خدمات</th>
+          <th>تعداد</th>
+          <th>مبلغ کل (ریال)</th>
+          <th>خدمات در وب‌سایت اصناف شهر</th>
+        </tr>
+
+        {% for service in object.services.all %}
+        <tr>
+          <td>{{ service.description }}</td>
+          <td>{{ service.quantity }}</td>
+          <td>{{ service.amount }}</td>
+          <td style="text-align: right">
+            {{ service.description }}
+          </td>
+        </tr>
+        {% endfor %}
+
+        <tr>
+          <td colspan="4" style="text-align: right">توضیحات</td>
+        </tr>
+
+        <tr>
+          <td colspan="2" style="text-align: right">کد مشاوره: —</td>
+          <td colspan="2" style="text-align: right">جمع فاکتور: {{ object.total_amount }}</td>
+        </tr>
+
+        <tr>
+          <td colspan="4" style="text-align: right">ساعت ارسال: –</td>
+        </tr>
+      </table>
+
+      <section>
+        <h3>شرح خدمات:</h3>
+        <ul>
+          <li>
+            با دریافت خدمات میتوانید از ساعت 10 صبح الی 18 بعدازظهر با مشاورین
+            بازرگانی ما در زمینه بهبود فروش و بازاریابی برای کسب و کارتان مشورت
+            بگیرید
+          </li>
+          <li>
+            تمامی موارد ذکر شده پس از واریز وجه، در مدت 20 روزکاری، نشر و به شما
+            نمایش داده خواهد شد
+          </li>
+        </ul>
+        <p style="color: red; font-weight: bold">
+          تماس با پشتیبانی (واتساپ): 09923823039
+        </p>
+        <p class="paymentNumber">
+          شماره کارت: 5041721049509285 (آقای علیرضا حسینعلی - بانک رسالت)
+        </p>
+        <p class="paymentNumber">
+          شماره شبا: 970700001000115568446001 (آقای علیرضا حسینعلی - بانک رسالت)
+        </p>
+        <p class="sign">امضا تحویل گیرنده:</p>
+      </section>
+
+      <footer>
+        <div>
+          <img src="{{ phone_icon }}" alt="icon" />
+          <p>44782351 - 44780156</p>
+        </div>
+        <div>
+          <img src="{{ msg_icon }}" alt="icon" />
+          <p>www.asnafshahr.com</p>
+        </div>
+        <div>
+          <img src="{{ telegram_icon }}" alt="icon" />
+          <p style="font-weight: 400; direction: rtl">
+            تهران, کیلومتر 14 جاده مخصوص, خیابان 55 شهرک غزالی, نبش خیابان توران
+            پشتی, پلاک 1
+          </p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
