@@ -1,0 +1,22 @@
+{
+  "platform": "django",
+  "django": {
+    "pythonVersion": "3.12",
+    "collectStatic": true,
+    "compileMessages": false,
+    "modifySettings": true,
+    "timezone": "Asia/Tehran"
+
+  },
+  "app": "crm-panel",
+  "disks": [
+    {
+      "name": "crm-disk2",
+      "mountTo": "static"
+    },
+    {
+      "name": "crm-disk",
+      "mountTo": "media"
+    }
+  ]
+}
