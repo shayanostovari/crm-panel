@@ -14,7 +14,7 @@
         margin: 0;
         padding: 0;
         background: #f0f0f0;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: Tahoma, Arial, sans-serif;
         -webkit-print-color-adjust: exact;
       }
 
@@ -25,7 +25,6 @@
         margin: 20px auto;
         background: #fff;
         border: 1px solid #000;
-        border-radius: 0;
         padding: 20mm;
         display: flex;
         flex-direction: column;
@@ -56,7 +55,6 @@
       table {
         width: 100%;
         border-collapse: collapse;
-        font-family: Tahoma, Arial, sans-serif;
         font-size: 14px;
         margin: 20px 0;
       }
@@ -152,14 +150,16 @@
     <div class="a4-page">
       <header>
         <div>
-          <img src="{{ logo_data }}" alt="logo" />
-          <h3>کانون آگهی و تبلیغات بازارسازان هوشمند پویا</h3>
+          {% if logo_data %}
+            <img src="{{ logo_data }}" alt="logo" />
+          {% endif %}
+          <h3>{{ object.business_name }}</h3>
           <p>دارای مجوز رسمی از وزارت فرهنگ و ارشاد اسلامی</p>
           <p>شماره مجوز: {{ object.license_number }}</p>
         </div>
         <div style="text-align: left">
           <p>شماره فاکتور: {{ object.invoice_number }}</p>
-          <p>تاریخ: {{ object.date }}</p>
+          <p>تاریخ: {{ object.get_jalali_date }}</p>
         </div>
       </header>
 
@@ -169,41 +169,35 @@
           <td colspan="2">مدیریت: {{ object.agency_manager }}</td>
         </tr>
         <tr class="header-row">
-          <td colspan="4">آدرس: —</td>
+          <td colspan="4">آدرس: {{ object.address }}</td>
         </tr>
         <tr class="header-row">
-          <td colspan="4">تماس: —</td>
+          <td colspan="4">تماس: {{ object.phone_number }}</td>
         </tr>
 
         <tr>
           <th>نام خدمات</th>
           <th>تعداد</th>
+          <th>مبلغ واحد (ریال)</th>
           <th>مبلغ کل (ریال)</th>
-          <th>خدمات در وب‌سایت اصناف شهر</th>
         </tr>
 
-        {% for service in object.services.all %}
+        {% for service in services %}
         <tr>
-          <td>{{ service.description }}</td>
+          <td>{{ service.get_service_name_display }}</td>
           <td>{{ service.quantity }}</td>
-          <td>{{ service.amount }}</td>
-          <td style="text-align: right">
-            {{ service.description }}
-          </td>
+          <td>{{ service.amount|intcomma }}</td>
+          <td>{{ service.total|intcomma }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align:center;">خدمتی ثبت نشده است</td>
         </tr>
         {% endfor %}
 
         <tr>
-          <td colspan="4" style="text-align: right">توضیحات</td>
-        </tr>
-
-        <tr>
-          <td colspan="2" style="text-align: right">کد مشاوره: —</td>
-          <td colspan="2" style="text-align: right">جمع فاکتور: {{ object.total_amount }}</td>
-        </tr>
-
-        <tr>
-          <td colspan="4" style="text-align: right">ساعت ارسال: –</td>
+          <td colspan="2" style="text-align: right">جمع فاکتور</td>
+          <td colspan="2" style="text-align: right">{{ total|intcomma }} ریال</td>
         </tr>
       </table>
 
@@ -224,25 +218,25 @@
           تماس با پشتیبانی (واتساپ): 09923823039
         </p>
         <p class="paymentNumber">
-          شماره کارت: 5041721049509285 (آقای علیرضا حسینعلی - بانک رسالت)
+          شماره کارت: 5041-7210-4950-9285 (بانک رسالت)
         </p>
         <p class="paymentNumber">
-          شماره شبا: 970700001000115568446001 (آقای علیرضا حسینعلی - بانک رسالت)
+          شماره شبا: 970700001000115568446001 (بانک رسالت)
         </p>
         <p class="sign">امضا تحویل گیرنده:</p>
       </section>
 
       <footer>
         <div>
-          <img src="{{ phone_icon }}" alt="icon" />
+          {% if phone_icon %}<img src="{{ phone_icon }}" alt="icon" />{% endif %}
           <p>44782351 - 44780156</p>
         </div>
         <div>
-          <img src="{{ msg_icon }}" alt="icon" />
+          {% if msg_icon %}<img src="{{ msg_icon }}" alt="icon" />{% endif %}
           <p>www.asnafshahr.com</p>
         </div>
         <div>
-          <img src="{{ telegram_icon }}" alt="icon" />
+          {% if telegram_icon %}<img src="{{ telegram_icon }}" alt="icon" />{% endif %}
           <p style="font-weight: 400; direction: rtl">
             تهران, کیلومتر 14 جاده مخصوص, خیابان 55 شهرک غزالی, نبش خیابان توران
             پشتی, پلاک 1

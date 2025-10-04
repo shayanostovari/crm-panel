@@ -8,6 +8,8 @@ django-weasyprint==2.4.0
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 fonttools==4.60.0
+jalali_core==1.0.0
+jdatetime==5.2.0
 Markdown==3.9
 pillow==11.3.0
 psycopg-binary==3.2.10
