@@ -1,0 +1,111 @@
+@font-face {
+  font-family: 'VazirCustom';
+  src: url("../fonts/Vazir-Regular.ttf") format('truetype');
+}
+
+html, body {
+  font-family: 'VazirCustom', Tahoma, Arial, sans-serif;
+  font-size: 12px;
+  color: #111;
+  direction: rtl;
+  margin: 0;
+  padding: 0;
+}
+
+@page {
+  size: A4;
+  margin: 15mm 15mm;
+}
+
+.container {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5mm;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #222;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.header .right {
+  text-align: right;
+}
+
+.header .left {
+  text-align: left;
+  direction: ltr;
+}
+
+.biz-name {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.license {
+  font-size: 11px;
+  color: #444;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.info-row .col {
+  width: 48%;
+}
+
+table.services {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table.services th, table.services td {
+  border: 1px solid #666;
+  padding: 6px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+table.services th {
+  background: #f5f5f5;
+}
+
+tfoot td {
+  border: none !important;
+  font-weight: bold;
+}
+
+.notes {
+  font-size: 12px;
+  margin-top: 15px;
+  line-height: 1.6;
+}
+
+.contact {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.footer {
+  margin-top: 15px;
+  border-top: 1px solid #ccc;
+  padding-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.right-align { text-align: right; }
+.grand-total {
+  font-weight: bold;
+  font-size: 14px;
+}

@@ -1,248 +1,247 @@
-<!DOCTYPE html>
+{% load static %}
+{% load humanize %}
+<!doctype html>
 <html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <title>فاکتور - A4</title>
+<head>
+    <meta charset="utf-8">
+    <title>فاکتور {{ object.invoice_number }}</title>
+
+    <!-- لینک به فایل CSS -->
+    <link rel="stylesheet" href="{% static 'invoice/css/invoice_style.css' %}">
+
+    <!-- استایل‌های اضافی برای مطابقت با PDF -->
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-      }
-      html,
-      body {
-        min-height: 100%;
-        margin: 0;
-        padding: 0;
-        background: #f0f0f0;
-        font-family: Tahoma, Arial, sans-serif;
-        -webkit-print-color-adjust: exact;
-      }
+        @font-face {
+            font-family: 'VazirCustom';
+            src: url("{{ font_data }}") format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
 
-      .a4-page {
-        width: 794px;
-        height: fit-content;
-        box-sizing: border-box;
-        margin: 20px auto;
-        background: #fff;
-        border: 1px solid #000;
-        padding: 20mm;
-        display: flex;
-        flex-direction: column;
-      }
-
-      header {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-      }
-
-      header img {
-        max-width: 80px;
-        height: auto;
-        object-fit: contain;
-      }
-
-      header h3 {
-        margin: 0;
-        font-size: 18px;
-      }
-
-      header p {
-        margin: 2px 0;
-        font-size: 12px;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 14px;
-        margin: 20px 0;
-      }
-      td,
-      th {
-        border: 1px solid black;
-        padding: 8px;
-        vertical-align: top;
-      }
-      .header-row td {
-        border: none;
-        font-weight: bold;
-      }
-      .header-row {
-        text-align: right;
-        border: 1px solid black;
-      }
-
-      section {
-        margin-top: 12px;
-        flex: 1;
-      }
-
-      section h3 {
-        margin: 6px 0;
-      }
-      section ul {
-        margin: 6px 0 12px 0;
-        padding-inline-start: 18px;
-      }
-      section p {
-        margin: 6px 0;
-        font-size: 14px;
-      }
-
-      .paymentNumber {
-        font-weight: bold;
-      }
-      .sign {
-        margin-top: 30px;
-      }
-
-      footer {
-        margin-top: 12px;
-      }
-      footer div {
-        display: flex;
-        align-items: center;
-        font-weight: 700;
-        gap: 8px;
-        margin-top: 6px;
-      }
-      footer div img {
-        width: 24px;
-        height: 24px;
-      }
-
-      @page {
-        size: A4;
-        margin: 0;
-      }
-
-      @media print {
-        html,
         body {
-          background: white;
-        }
-        .a4-page {
-          margin: 0;
-          border: 1px solid #000;
-          box-shadow: none;
-          padding: 15mm;
-          page-break-after: always;
+            font-family: 'VazirCustom', Tahoma, sans-serif;
         }
 
-        header,
-        section,
-        footer {
-          break-inside: avoid;
+        /* استایل‌های جدید برای مطابقت با PDF */
+        .main-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
-      }
 
-      @media (max-width: 760px) {
-        .a4-page {
-          width: calc(100vw - 20px);
-          height: auto;
-          padding: 12px;
+        .sub-title {
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 3px;
         }
-      }
+
+        .invoice-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .business-details {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #666;
+        }
+
+        .business-details .right {
+            text-align: right;
+        }
+
+        .business-details .left {
+            text-align: left;
+        }
+
+        .page-info {
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #666;
+        }
+
+        .page-info strong {
+            margin-left: 15px;
+        }
+
+        .services-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        .services-table th,
+        .services-table td {
+            border: 1px solid #000;
+            padding: 6px 4px;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .services-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
+
+        .notes-section {
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #666;
+            font-size: 11px;
+        }
+
+        .notes-section ul {
+            margin: 5px 0;
+            padding-right: 20px;
+        }
+
+        .notes-section li {
+            margin-bottom: 3px;
+        }
+
+        .contact-section {
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #666;
+            font-size: 11px;
+        }
+
+        .contact-section div {
+            margin-bottom: 2px;
+        }
+
+        .footer-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #000;
+        }
+
+        .signature {
+            text-align: center;
+        }
+
+        .website {
+            text-align: left;
+        }
+
+        /* بازنویسی برخی استایل‌های موجود */
+        .header {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 5px;
+        }
+
+        .biz-name {
+            font-size: 16px;
+        }
+
+        table.services {
+            margin-top: 5px;
+        }
     </style>
-  </head>
-  <body>
-    <div class="a4-page">
-      <header>
-        <div>
-          {% if logo_data %}
-            <img src="{{ logo_data }}" alt="logo" />
-          {% endif %}
-          <h3>{{ object.business_name }}</h3>
-          <p>دارای مجوز رسمی از وزارت فرهنگ و ارشاد اسلامی</p>
-          <p>شماره مجوز: {{ object.license_number }}</p>
+</head>
+
+<body>
+<div class="container">
+
+    <!-- هدر اصلی مطابق PDF -->
+    <div class="main-title">کانون آگهی و تبلیغات بازارسازان هوشمند پویا</div>
+    <div class="sub-title">دارای مجوز رسمی از وزارت فرهنگ و ارشاد اسلامی</div>
+    <div class="sub-title">شماره مجوز: {{ object.license_number }}</div>
+    <div class="invoice-title">فاکتور عضویت اصناف شهر</div>
+
+    <!-- اطلاعات کسب و کار -->
+    <div class="business-details">
+        <div class="right">
+            <div class="biz-name">{{ object.business_name }}</div>
+            <div>مدیریت: {{ object.agency_manager }}</div>
+            <div>آدرس: {{ object.address }}</div>
+            <div>تلفن: {{ object.phone_number }}</div>
         </div>
-        <div style="text-align: left">
-          <p>شماره فاکتور: {{ object.invoice_number }}</p>
-          <p>تاریخ: {{ object.get_jalali_date }}</p>
+        <div class="left">
+            {% if logo_data %}
+            <img src="{{ logo_data }}" alt="logo" style="height:60px;">
+            {% endif %}
         </div>
-      </header>
+    </div>
 
-      <table>
-        <tr class="header-row">
-          <td colspan="2">نام صنف: {{ object.business_name }}</td>
-          <td colspan="2">مدیریت: {{ object.agency_manager }}</td>
-        </tr>
-        <tr class="header-row">
-          <td colspan="4">آدرس: {{ object.address }}</td>
-        </tr>
-        <tr class="header-row">
-          <td colspan="4">تماس: {{ object.phone_number }}</td>
-        </tr>
+    <!-- اطلاعات صفحه -->
+    <div class="page-info">
+        <strong>نام صفحه:</strong> تست
+        <strong>آدرس:</strong> 1/07/1404
+        <strong>تاریخ:</strong> {{ object.get_jalali_date }}
+        <strong>تلفن:</strong> {{ object.phone_number }}
+    </div>
 
+    <!-- جدول خدمات -->
+    <table class="services-table">
+        <thead>
         <tr>
-          <th>نام خدمات</th>
-          <th>تعداد</th>
-          <th>مبلغ واحد (ریال)</th>
-          <th>مبلغ کل (ریال)</th>
+            <th style="width: 50%;">نام خدمات</th>
+            <th style="width: 15%;">تعداد</th>
+            <th style="width: 20%;">مبلغ واحد (ریال)</th>
+            <th style="width: 15%;">مبلغ کل (ریال)</th>
         </tr>
-
-        {% for service in services %}
+        </thead>
+        <tbody>
+        {% for s in services %}
         <tr>
-          <td>{{ service.get_service_name_display }}</td>
-          <td>{{ service.quantity }}</td>
-          <td>{{ service.amount|intcomma }}</td>
-          <td>{{ service.total|intcomma }}</td>
+            <td>{{ s.get_service_name_display }}</td>
+            <td>{{ s.quantity }}</td>
+            <td>{{ s.amount|intcomma }}</td>
+            <td>{{ s.total|intcomma }}</td>
         </tr>
         {% empty %}
-        <tr>
-          <td colspan="4" style="text-align:center;">خدمتی ثبت نشده است</td>
-        </tr>
+        <tr><td colspan="4" style="text-align: center;">خدمتی ثبت نشده است</td></tr>
         {% endfor %}
+        </tbody>
+    </table>
 
-        <tr>
-          <td colspan="2" style="text-align: right">جمع فاکتور</td>
-          <td colspan="2" style="text-align: right">{{ total|intcomma }} ریال</td>
-        </tr>
-      </table>
-
-      <section>
-        <h3>شرح خدمات:</h3>
-        <ul>
-          <li>
-            با دریافت خدمات میتوانید از ساعت 10 صبح الی 18 بعدازظهر با مشاورین
-            بازرگانی ما در زمینه بهبود فروش و بازاریابی برای کسب و کارتان مشورت
-            بگیرید
-          </li>
-          <li>
-            تمامی موارد ذکر شده پس از واریز وجه، در مدت 20 روزکاری، نشر و به شما
-            نمایش داده خواهد شد
-          </li>
-        </ul>
-        <p style="color: red; font-weight: bold">
-          تماس با پشتیبانی (واتساپ): 09923823039
-        </p>
-        <p class="paymentNumber">
-          شماره کارت: 5041-7210-4950-9285 (بانک رسالت)
-        </p>
-        <p class="paymentNumber">
-          شماره شبا: 970700001000115568446001 (بانک رسالت)
-        </p>
-        <p class="sign">امضا تحویل گیرنده:</p>
-      </section>
-
-      <footer>
-        <div>
-          {% if phone_icon %}<img src="{{ phone_icon }}" alt="icon" />{% endif %}
-          <p>44782351 - 44780156</p>
-        </div>
-        <div>
-          {% if msg_icon %}<img src="{{ msg_icon }}" alt="icon" />{% endif %}
-          <p>www.asnafshahr.com</p>
-        </div>
-        <div>
-          {% if telegram_icon %}<img src="{{ telegram_icon }}" alt="icon" />{% endif %}
-          <p style="font-weight: 400; direction: rtl">
-            تهران, کیلومتر 14 جاده مخصوص, خیابان 55 شهرک غزالی, نبش خیابان توران
-            پشتی, پلاک 1
-          </p>
-        </div>
-      </footer>
+    <!-- جمع کل -->
+    <div style="text-align: left; margin: 5px 0; font-weight: bold;">
+        جمع فاکتور: {{ total|intcomma }} ریال
     </div>
-  </body>
+
+    <!-- توضیحات خدمات -->
+    <div class="notes-section">
+        <strong>شرح خدمات:</strong>
+        <ul>
+            <li>با دریافت خدمات میتوانید از ساعت 10 صبح الی 18 بعدازظهر با مشاورین بازرگانی ما در زمینه بهبود فروش و بازاریابی برای کسب و کارتان مشورت بگیرید.</li>
+            <li>تمامی موارد ذکر شده پس از واریز وجه، در مدت 20 روزکاری، نشر و به شما نمایش داده خواهد شد.</li>
+        </ul>
+    </div>
+
+    <!-- اطلاعات تماس و بانک -->
+    <div class="contact-section">
+        <div><strong>تماس با پشتیبانی (واتساپ):</strong> 09923823039</div>
+        <div><strong>(بانک رسالت)</strong></div>
+        <div><strong>شماره کارت:</strong> 5041-7210-4950-9285</div>
+        <div><strong>شماره شبا:</strong> IR970700001000115568446001</div>
+    </div>
+
+    <!-- فوتر -->
+    <div class="footer-section">
+        <div class="signature">
+            امضاء تحویل گیرنده: ____________________
+        </div>
+        <div class="website">
+            www.asnafshahr.com
+        </div>
+    </div>
+
+</div>
+</body>
 </html>
