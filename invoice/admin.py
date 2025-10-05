@@ -1,6 +1,8 @@
 # invoice/admin.py
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import Invoice, ServiceItem
+
 
 class ServiceItemInline(admin.TabularInline):
     model = ServiceItem
@@ -9,12 +11,24 @@ class ServiceItemInline(admin.TabularInline):
     readonly_fields = ("line_total",)
 
     def line_total(self, obj):
-        return obj.total
+        try:
+            return format(obj.total or 0, ",")
+        except Exception:
+            return "0"
     line_total.short_description = "جمع سطر"
+
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-    list_display = ("business_name", "invoice_number", "get_jalali_date", "agency_manager", "license_number", "total_amount_display", "created_at")
+    list_display = (
+        "business_name",
+        "invoice_number",
+        "get_jalali_date_safe",
+        "agency_manager",
+        "license_number",
+        "total_amount_display",
+        "created_at",
+    )
     search_fields = ("invoice_number", "business_name")
     list_filter = ("date", "created_at")
     ordering = ("-date",)
@@ -31,9 +45,22 @@ class InvoiceAdmin(admin.ModelAdmin):
     )
 
     def total_amount_display(self, obj):
-        return format(obj.total_amount(), ",")
+        """
+        نمایش امن جمع کل فاکتور در ادمین — بدون خطا اگر هیچ خدمت نداشت.
+        """
+        try:
+            total = obj.total_amount() or 0
+            return format(total, ",")
+        except Exception as e:
+            return f"0 (⚠️ خطا در محاسبه)"
     total_amount_display.short_description = "جمع کل (ریال)"
 
-    def get_jalali_date(self, obj):
-        return obj.get_jalali_date()
-    get_jalali_date.short_description = "تاریخ (شمسی)"
+    def get_jalali_date_safe(self, obj):
+        """
+        نمایش تاریخ شمسی به‌صورت امن (در صورت نبود تاریخ یا خطا)
+        """
+        try:
+            return obj.get_jalali_date() or "-"
+        except Exception:
+            return "-"
+    get_jalali_date_safe.short_description = "تاریخ (شمسی)"
