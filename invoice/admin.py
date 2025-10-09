@@ -1,6 +1,5 @@
 # invoice/admin.py
 from django.contrib import admin
-from django.utils.html import format_html
 from .models import Invoice, ServiceItem
 
 
@@ -28,6 +27,7 @@ class InvoiceAdmin(admin.ModelAdmin):
         "license_number",
         "total_amount_display",
         "created_at",
+        "description",
     )
     search_fields = ("invoice_number", "business_name")
     list_filter = ("date", "created_at")
