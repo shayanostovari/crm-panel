@@ -1,48 +1,56 @@
 import os
 from django.conf import settings
+from django.shortcuts import get_object_or_404
+from django.template.loader import get_template
 from django.http import HttpResponse
-from django.template.loader import render_to_string
-from weasyprint import HTML
-from django.views import View
-from .models import Invoice
+from weasyprint import HTML, CSS
+from .models import Invoice, ServiceItem
 
 
-class InvoicePDFView(View):
-    def get(self, request, pk):
-        try:
-            # گرفتن شیء فاکتور از دیتابیس
-            obj = Invoice.objects.get(pk=pk)
+def generate_invoice_pdf(request, pk):
+    # پیدا کردن فاکتور مربوطه
+    invoice = get_object_or_404(Invoice, pk=pk)
+    services = ServiceItem.objects.filter(invoice=invoice)
 
-            # مسیرهای مطلق مخصوص Liara برای WeasyPrint
-            logo_path = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/logo.jpg')}"
-            telegram_path = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/icons8-telegram-24.png')}"
-            msg_path = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/icons8-message-50.png')}"
-            phone_path = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/icons8-phone-50.png')}"
+    # مسیر فایل‌های استاتیک برای Liara (file://)
+    logo_path = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/logo.jpg')}"
+    address_icon = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/address.png')}"
+    website_icon = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/website.png')}"
+    phone_icon = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/phone.png')}"
+    instagram_icon = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/instagram.png')}"
 
-            # آماده‌سازی context برای قالب PDF
-            context = {
-                'object': obj,
-                'business_name': obj.business_name,
-                'agency_manager': obj.agency_manager,
-                'total_amount': obj.total_amount(),
-                'logo_data': logo_path,
-                'telegram_icon': telegram_path,
-                'msg_icon': msg_path,
-                'phone_icon': phone_path,
-                'description': getattr(obj, 'description', ''),
-            }
+    # قالب HTML
+    template = get_template("invoice_template.html")
 
-            # رندر HTML از قالب
-            html_string = render_to_string('invoice/invoice_template.html', context)
+    # کانتکست داده‌ها
+    context = {
+        "object": invoice,
+        "services": services,
+        "logo_data": logo_path,
+        "address_icon": address_icon,
+        "website_icon": website_icon,
+        "phone_icon": phone_icon,
+        "instagram_icon": instagram_icon,
+    }
 
-            # تبدیل HTML به PDF با WeasyPrint
-            html = HTML(string=html_string)
-            pdf_file = html.write_pdf()
+    # رندر قالب HTML با داده‌ها
+    html_string = template.render(context)
 
-            # ارسال خروجی PDF به مرورگر
-            response = HttpResponse(pdf_file, content_type='application/pdf')
-            response['Content-Disposition'] = f'filename="invoice_{obj.pk}.pdf"'
-            return response
+    # مسیر فونت و CSS
+    css_path = os.path.join(settings.STATIC_ROOT, "invoice/css/invoice_pdf.css")
+    pdf_font_path = os.path.join(settings.STATIC_ROOT, "invoice/fonts/Vazirmatn-Regular.ttf")
 
-        except Exception as e:
-            return HttpResponse(f"PDF generation failed: {str(e)}")
+    # ساخت خروجی PDF
+    html = HTML(string=html_string, base_url=settings.STATIC_ROOT)
+    css = CSS(
+        filename=css_path,
+        font_config=None,
+    )
+
+    pdf_file = html.write_pdf(stylesheets=[css])
+
+    # پاسخ HTTP جهت نمایش در مرورگر
+    response = HttpResponse(pdf_file, content_type="application/pdf")
+    filename = f"فاکتور_{invoice.invoice_number}.pdf"
+    response["Content-Disposition"] = f"inline; filename={filename}"
+    return response

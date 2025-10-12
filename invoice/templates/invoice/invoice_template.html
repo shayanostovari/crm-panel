@@ -3,281 +3,60 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <title>فاکتور {{ object.invoice_number }}</title>
-  <style>
-    @page { size: A4; margin: 0; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #fff;
-      direction: rtl;
-      font-family: sans-serif;
-      -webkit-print-color-adjust: exact;
-      color: #222;
-    }
-
-    .page {
-      position: relative;
-      width: 210mm;
-      min-height: 297mm;
-      padding: 15mm 20mm;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border: 1px solid #111;
-    }
-
-    .red-right, .red-left {
-      position: absolute;
-      width: 45px;
-      height: 260px;
-      background: #c62828;
-      z-index: 1;
-    }
-    .red-right { right: 0; top: 25mm; }
-    .red-left { left: 0; bottom: 25mm; }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      z-index: 2;
-      margin-bottom: 12px;
-    }
-
-    .company-block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 6px;
-      max-width: 60%;
-    }
-
-    .logo {
-      width: 95px;
-      height: auto;
-      object-fit: contain;
-      margin-bottom: 10px; /* فاصله واقعی بین لوگو و متن */
-    }
-
-    .company-text h3 {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 1.5;
-    }
-
-    .company-text p {
-      margin: 1px 0;
-      font-size: 12px;
-      font-weight: 400;
-      line-height: 1.4;
-    }
-
-    .meta-info {
-      text-align: left;
-      font-size: 13px;
-      line-height: 1.5;
-      min-width: 150px;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      font-size: 13px;
-      margin-top: 10px;
-      z-index: 2;
-    }
-
-    th, td {
-      border: 1px solid #111;
-      padding: 6px 8px;
-      vertical-align: top;
-    }
-
-    .header-row td {
-      border: none;
-      font-weight: 600;
-      padding: 6px;
-    }
-
-    .desc-row {
-      background: #fafafa;
-      font-size: 12px;
-      line-height: 1.4;
-      border-left: 1px solid #111;
-      border-right: 1px solid #111;
-      border-bottom: 1px solid #111;
-    }
-
-    .summary-row td {
-      font-weight: 600;
-    }
-
-    section {
-      margin-top: 14px;
-      font-size: 13px;
-      line-height: 1.5;
-      color: #222;
-    }
-
-    section h3 {
-      margin-bottom: 6px;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    section ul {
-      margin: 4px 0 8px 20px;
-    }
-
-    .contact {
-      margin-top: 6px;
-      font-weight: 600;
-      color: #c62828;
-    }
-
-    .bank-info p {
-      margin: 2px 0;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .signature {
-      margin-top: 10px;
-      font-size: 13px;
-    }
-
-    /* ===== فوتر با تراز واقعی ===== */
-    footer {
-      margin-top: 10px;
-      font-size: 12px;
-      font-weight: 400;
-      color: #222;
-    }
-
-    .footer-table {
-      border-collapse: collapse;
-      width: auto;
-    }
-
-    .footer-table td {
-      vertical-align: middle;
-      padding: 2px 0;
-      border: none;
-    }
-
-    .footer-icon {
-      width: 16px;
-      height: 16px;
-      object-fit: contain;
-      margin-left: 5px;
-    }
-
-    .footer-text {
-      padding-right: 4px;
-      line-height: 1.3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>فاکتور شماره {{ object.invoice_number }}</title>
+    <link rel="stylesheet" href="{% static 'invoice/css/invoice_pdf.css' %}">
 </head>
 <body>
-  <div class="page">
-    <div class="red-right"></div>
-    <div class="red-left"></div>
 
-    <header>
-      <div class="company-block">
-        <img src="{{ logo_data }}" class="logo" alt="logo">
-        <div class="company-text">
-          <h3>کانون آگهی و تبلیغات بازارسازان هوشمند پویا</h3>
-          <p>دارای مجوز رسمی از وزارت فرهنگ و ارشاد اسلامی</p>
-          <p>شماره مجوز: {{ object.license_number }}</p>
-        </div>
-      </div>
-      <div class="meta-info">
-        <p><strong>شماره فاکتور:</strong> {{ object.invoice_number }}</p>
-        <p><strong>تاریخ:</strong> {{ object.get_jalali_date }}</p>
-      </div>
-    </header>
+<div class="red-top"></div>
+<div class="red-left"></div>
 
-    <table>
-      <tr class="header-row">
-        <td colspan="2">نام صنف: <strong>{{ object.business_name }}</strong></td>
-        <td colspan="2">مدیریت: <strong>{{ object.agency_manager }}</strong></td>
-      </tr>
-      <tr class="header-row">
-        <td colspan="4">آدرس: {{ object.address|default:"-" }}</td>
-      </tr>
-      <tr class="header-row">
-        <td colspan="4">تماس: {{ object.phone_number|default:"-" }}</td>
-      </tr>
+<div class="header">
+    <img src="{{ logo_data }}" alt="لوگو" class="logo">
+    <h1>کانون آگهی و خدمات بازارسازان هوشمند پویا</h1>
+    <p>مرکز تخصصی تبلیغات و بازاریابی دیجیتال <br> به شناسه ملی 14008364351</p>
+</div>
 
-      <tr>
-        <th style="width:35%;">نام خدمات</th>
-        <th style="width:15%;">تعداد</th>
-        <th style="width:25%;">مبلغ واحد (ریال)</th>
-        <th style="width:25%;">مبلغ کل (ریال)</th>
-      </tr>
+<div class="info-block">
+    <p>شماره فاکتور: {{ object.invoice_number }}</p>
+    <p>تاریخ: {{ object.date_created|date:"Y/m/d" }}</p>
+    <p>نام سفارش‌دهنده: {{ object.business_name }}</p>
+    <p>مدیریت: {{ object.agency_manager }}</p>
+    <p>شماره تماس: {{ object.phone }}</p>
+</div>
 
-      {% for s in services %}
-      <tr>
-        <td><strong>{{ s.get_service_name_display }}</strong></td>
-        <td style="text-align:center;">{{ s.quantity }}</td>
-        <td style="text-align:right;">{{ s.amount|intcomma }}</td>
-        <td style="text-align:right;">{{ s.total|intcomma }}</td>
-      </tr>
-      {% if s.description %}
-      <tr>
-        <td colspan="4" class="desc-row">{{ s.description|linebreaksbr }}</td>
-      </tr>
-      {% endif %}
-      {% endfor %}
-
-      {% if not services %}
-      <tr><td colspan="4" style="text-align:center;">هیچ خدمتی ثبت نشده است</td></tr>
-      {% endif %}
-
-      <tr class="summary-row">
-        <td colspan="2" style="text-align:right;">کد مشاور: -</td>
-        <td colspan="2" style="text-align:right;">جمع فاکتور: <strong>{{ total|intcomma }} ریال</strong></td>
-      </tr>
-    </table>
-
-    <section>
-      <h3>شرح خدمات:</h3>
-      <ul>
-        <li>با دریافت خدمات می‌توانید از ساعت ۱۰ صبح الی ۱۸ بعدازظهر با مشاورین بازرگانی ما در زمینه بهبود فروش و بازاریابی برای کسب و کارتان مشورت بگیرید.</li>
-        <li>تمامی موارد ذکر شده پس از واریز وجه در مدت ۲۰ روز کاری نشر و به شما نمایش داده خواهد شد.</li>
-      </ul>
-
-      <div class="contact">تماس با پشتیبانی (واتساپ): <strong>09923823039</strong></div>
-      <div class="bank-info">
-        <p>شماره کارت: <strong>5041‑7210‑4950‑9285</strong> (علیرضا حسینعلی ‑ بانک رسالت)</p>
-        <p>شماره شبا: <strong>IR970700001000115568446001</strong> (علیرضا حسینعلی)</p>
-      </div>
-      <div class="signature">امضا تحویل‌گیرنده:</div>
-    </section>
-
-    <footer>
-      <table class="footer-table">
+<table class="services">
+    <thead>
         <tr>
-          <td><img src="{{ telegram_icon }}" class="footer-icon" alt="telegram"></td>
-          <td class="footer-text">تهران، کیلومتر ۱۴ جاده مخصوص، خیابان ۵۵ شهرک غزالی، نبش خیابان توران پشتی، پلاک ۱</td>
+            <th>نام خدمت</th>
+            <th>تعداد</th>
+            <th>مبلغ کل (ریال)</th>
         </tr>
+    </thead>
+    <tbody>
+        {% for s in services %}
         <tr>
-          <td><img src="{{ msg_icon }}" class="footer-icon" alt="msg"></td>
-          <td class="footer-text">www.asnafshahr.com</td>
+            <td>{{ s.service_type }}</td>
+            <td>{{ s.quantity }}</td>
+            <td>{{ s.amount|floatformat:0|intcomma }}</td>
         </tr>
-        <tr>
-          <td><img src="{{ phone_icon }}" class="footer-icon" alt="phone"></td>
-          <td class="footer-text">44782351 ‑ 44780156</td>
-        </tr>
-      </table>
-    </footer>
+        {% endfor %}
+    </tbody>
+</table>
 
-  </div>
+<div class="footer">
+    <p>شرح خدمات: {{ object.description }}</p>
+    <p class="brand">شماره کارت (بانک رسالت): 5041-7210-4950-9285 (علیرضا حسین علی)</p>
+    <p>شماره حساب بانکی: 3288536235 | شماره شبا: IR870700000001155894600001</p>
+    <p>آدرس: تهران، کیلومتر ۱۴ جاده مخصوص کرج – خیابان ...</p>
+    <div class="icons">
+        <img src="{{ address_icon }}" alt="آدرس">
+        <img src="{{ phone_icon }}" alt="تلفن">
+        <img src="{{ website_icon }}" alt="وبسایت">
+        <img src="{{ instagram_icon }}" alt="اینستاگرام">
+    </div>
+</div>
+
 </body>
 </html>
