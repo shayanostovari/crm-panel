@@ -5,13 +5,7 @@ from django.urls import reverse
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-    list_display = (
-        'id',
-        'customer_name',
-        'total_price_display',
-        'invoice_date_jalali',
-        'pdf_link',
-    )
+    list_display = ('id', 'customer_name', 'total_price_display', 'invoice_date_jalali', 'pdf_link')
     list_display_links = ('id', 'customer_name')
     search_fields = ('customer_name', 'id')
     ordering = ('-id',)
