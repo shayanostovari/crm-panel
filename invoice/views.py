@@ -13,13 +13,13 @@ class InvoicePDFView(View):
             # گرفتن شیء فاکتور از دیتابیس
             obj = Invoice.objects.get(pk=pk)
 
-            # ساخت مسیرهای مطلق استاتیک برای لیارا
-            logo_path = os.path.join(settings.STATIC_ROOT, 'invoice/pics/logo.jpg')
-            telegram_path = os.path.join(settings.STATIC_ROOT, 'invoice/pics/icons8-telegram-24.png')
-            msg_path = os.path.join(settings.STATIC_ROOT, 'invoice/pics/icons8-message-50.png')
-            phone_path = os.path.join(settings.STATIC_ROOT, 'invoice/pics/icons8-phone-50.png')
+            # مسیرهای مطلق مخصوص Liara برای WeasyPrint
+            logo_path = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/logo.jpg')}"
+            telegram_path = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/icons8-telegram-24.png')}"
+            msg_path = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/icons8-message-50.png')}"
+            phone_path = f"file://{os.path.join(settings.STATIC_ROOT, 'invoice/pics/icons8-phone-50.png')}"
 
-            # آماده‌سازی context برای قالب HTML
+            # آماده‌سازی context برای قالب PDF
             context = {
                 'object': obj,
                 'business_name': obj.business_name,
@@ -29,22 +29,20 @@ class InvoicePDFView(View):
                 'telegram_icon': telegram_path,
                 'msg_icon': msg_path,
                 'phone_icon': phone_path,
-                # در صورت داشتن اطلاعات اضافی:
                 'description': getattr(obj, 'description', ''),
             }
 
-            # رندر قالب به HTML
+            # رندر HTML از قالب
             html_string = render_to_string('invoice/invoice_template.html', context)
 
             # تبدیل HTML به PDF با WeasyPrint
-            html = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
+            html = HTML(string=html_string)
             pdf_file = html.write_pdf()
 
-            # پاسخ HTTP با فایل PDF
+            # ارسال خروجی PDF به مرورگر
             response = HttpResponse(pdf_file, content_type='application/pdf')
             response['Content-Disposition'] = f'filename="invoice_{obj.pk}.pdf"'
             return response
 
         except Exception as e:
-            # خطاگیری برای اشکال‌یابی در لیارا
             return HttpResponse(f"PDF generation failed: {str(e)}")

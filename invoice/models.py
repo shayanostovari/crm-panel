@@ -1,7 +1,5 @@
-# invoice/models.py
 from decimal import Decimal
 import jdatetime
-
 from django.db import models
 from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 
@@ -12,14 +10,13 @@ SERVICE_CHOICES = [
 
 class Invoice(models.Model):
     invoice_number = models.CharField(max_length=50, unique=True, verbose_name="شماره فاکتور")
-    date = models.DateField(verbose_name="تاریخ فاکتور")  # تاریخ را به صورت DateField نگه می‌داریم
+    date = models.DateField(verbose_name="تاریخ فاکتور")
     business_name = models.CharField(max_length=200, verbose_name="نام صنف")
     agency_manager = models.CharField(max_length=100, verbose_name="مدیریت")
     license_number = models.CharField(max_length=100, default="14030455", verbose_name="شماره مجوز")
     address = models.CharField(max_length=200, verbose_name="آدرس")
     phone_number = models.CharField(max_length=20, verbose_name="شماره تلفن")
     description = models.TextField(verbose_name="توضیحات")
-    # agent_code = models.CharField(verbose_name="کد مشاور")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -30,7 +27,6 @@ class Invoice(models.Model):
         return f"فاکتور {self.invoice_number} - {self.business_name}"
 
     def total_amount(self):
-        """جمع کل (مبلغ * تعداد) همه خدمات"""
         total = self.services.aggregate(
             total=Sum(
                 ExpressionWrapper(F("amount") * F("quantity"), output_field=DecimalField())
@@ -39,7 +35,6 @@ class Invoice(models.Model):
         return total
 
     def get_jalali_date(self):
-        """تبدیل تاریخ ذخیره‌شده به تاریخ شمسی (جلالی) — خروجی رشته"""
         if not self.date:
             return ""
         j = jdatetime.date.fromgregorian(date=self.date)
