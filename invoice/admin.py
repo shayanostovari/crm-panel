@@ -1,40 +1,53 @@
+# invoice/admin.py
 from django.contrib import admin
-from .models import Invoice
 from django.utils.html import format_html
 from django.urls import reverse
+from .models import Invoice, ServiceItem
+
+
+class ServiceItemInline(admin.TabularInline):
+    """نمایش خدمات مربوطه در پایین صفحه فاکتور داخل پنل ادمین"""
+    model = ServiceItem
+    extra = 1  # تعداد خطوط خالی برای افزودن خدمت جدید
+    fields = ('service_name', 'quantity', 'amount', 'description')
+    verbose_name = "خدمت"
+    verbose_name_plural = "خدمات"
+    # فیلدهای choice (service_name) به صورت select خودکار نشان داده می‌شوند چون choices در مدل تنظیم شده
 
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-    # ستون‌هایی که در لیست فاکتورها در پنل مدیریتی نمایش داده می‌شوند
+    """مدیریت فاکتورها در پنل ادمین"""
     list_display = (
         'id',
-        'business_name',          # فیلد موجود در مدل Invoice
-        'agency_manager',         # مدیر مسئول
-        'total_price_display',    # نمایش مبلغ کل به صورت فرمت‌شده
-        'invoice_date_jalali',    # تاریخ شمسی
-        'pdf_link',               # لینک دانلود PDF
+        'invoice_number',
+        'business_name',
+        'agency_manager',
+        'total_price_display',
+        'invoice_date_jalali',
+        'pdf_link',
     )
     list_display_links = ('id', 'business_name')
-    search_fields = ('business_name', 'agency_manager', 'license_number', 'id')
+    search_fields = ('invoice_number', 'business_name', 'agency_manager', 'license_number')
     ordering = ('-id',)
+    inlines = [ServiceItemInline]  # 👈 اضافه شدن جدول خدمات به صفحه فاکتور
 
     def total_price_display(self, obj):
-        """نمایش مبلغ کل فاکتور به صورت فارسی و با جداکننده هزارگان"""
+        """نمایش مجموع فاکتور با جداکننده هزارگان"""
         try:
-            total = obj.total_amount()  # فراخوانی تابع محاسبه مجموع در مدل
-            return f"{total:,.0f} تومان"
+            total = obj.total_amount()
+            return f"{total:,.0f} ریال"
         except Exception:
-            return "-"
-    total_price_display.short_description = "مبلغ کل"
+            return "—"
+    total_price_display.short_description = "جمع کل"
 
     def invoice_date_jalali(self, obj):
-        """تبدیل تاریخ فاکتور به فرمت شمسی خوانا"""
+        """تبدیل تاریخ به فرمت شمسی"""
         return obj.get_jalali_date()
     invoice_date_jalali.short_description = "تاریخ فاکتور"
 
     def pdf_link(self, obj):
-        """ایجاد لینک قابل کلیک برای دانلود فایل PDF فاکتور"""
+        """لینک مستقیم به PDF فاکتور"""
         url = reverse('invoice-pdf', args=[obj.pk])
-        return format_html('<a href="{}" target="_blank">📄 دانلود PDF</a>', url)
-    pdf_link.short_description = "دانلود PDF"
+        return format_html('<a href="{}" target="_blank">📄 نمایش PDF</a>', url)
+    pdf_link.short_description = "PDF فاکتور"
