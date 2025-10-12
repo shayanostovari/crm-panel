@@ -1,24 +1,9 @@
-/* 📌 فونت‌های Vazir از استاتیک (فقط برای مرورگر، PDF از base64 استفاده می‌کند) */
-@font-face {
-  font-family: 'Vazir';
-  src: url("../fonts/Vazir-Regular.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Vazir';
-  src: url("../fonts/Vazir-Bold.ttf") format("truetype");
-  font-weight: bold;
-  font-style: normal;
-}
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
   width: 100%;
   min-height: 100%;
   background: #f3f3f3;
-  font-family: 'Vazir', Tahoma, sans-serif;
   -webkit-print-color-adjust: exact;
   color: #222;
 }

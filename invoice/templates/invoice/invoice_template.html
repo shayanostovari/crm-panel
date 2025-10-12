@@ -1,262 +1,283 @@
-
 {% load static %}
 {% load humanize %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-  <head>
-    <meta charset="utf-8" />
-    <title>فاکتور {{ object.invoice_number }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<head>
+  <meta charset="utf-8" />
+  <title>فاکتور {{ object.invoice_number }}</title>
+  <style>
+    @page { size: A4; margin: 0; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      direction: rtl;
+      font-family: sans-serif;
+      -webkit-print-color-adjust: exact;
+      color: #222;
+    }
 
-    <style>
-      /* فونت‌های Embed شده از ویو */
-      {% if font_data %}
-      @font-face {
-        font-family: 'VazirmatnEmbed';
-        src: url("{{ font_data }}") format("truetype");
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-      }
-      {% endif %}
-      {% if font_data_bold %}
-      @font-face {
-        font-family: 'VazirmatnEmbed';
-        src: url("{{ font_data_bold }}") format("truetype");
-        font-weight: bold;
-        font-style: normal;
-        font-display: swap;
-      }
-      {% endif %}
+    .page {
+      position: relative;
+      width: 210mm;
+      min-height: 297mm;
+      padding: 15mm 20mm;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid #111;
+    }
 
-      body {
-        font-family: {% if font_data %}'VazirmatnEmbed', {% endif %} Tahoma, Arial, sans-serif;
-        color: #222;
-        direction: rtl;
-        margin: 0;
-        background: #f5f5f5;
-      }
+    .red-right, .red-left {
+      position: absolute;
+      width: 45px;
+      height: 260px;
+      background: #c62828;
+      z-index: 1;
+    }
+    .red-right { right: 0; top: 25mm; }
+    .red-left { left: 0; bottom: 25mm; }
 
-      * { box-sizing: border-box; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      z-index: 2;
+      margin-bottom: 12px;
+    }
 
-      .container {
-        width: 100%;
-        min-height: 100vh;
-        padding: 20px 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-      }
+    .company-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      max-width: 60%;
+    }
 
-      .first-red-section, .second-red-section {
-        width: 50px;
-        height: 300px;
-        background: #c62828;
-        position: absolute;
-        z-index: 1;
-      }
-      .first-red-section { right: -50px; top: 40px; }
-      .second-red-section { left: -50px; bottom: 40px; }
+    .logo {
+      width: 95px;
+      height: auto;
+      object-fit: contain;
+      margin-bottom: 10px; /* فاصله واقعی بین لوگو و متن */
+    }
 
-      .a4-page {
-        width: 794px;
-        background: #fff;
-        border: 1px solid #111;
-        padding: 20mm;
-        display: flex;
-        flex-direction: column;
-        z-index: 2;
-      }
+    .company-text h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
 
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 12px;
-        margin-bottom: 12px;
-      }
+    .company-text p {
+      margin: 1px 0;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.4;
+    }
 
-      .company-block { display: flex; gap: 12px; align-items: flex-start; }
-      .logo { max-width: 90px; height: auto; object-fit: contain; }
-      .company-text h3 { font-size: 18px; margin: 0 0 4px 0; }
-      .company-text p { margin: 2px 0; font-size: 12px; }
+    .meta-info {
+      text-align: left;
+      font-size: 13px;
+      line-height: 1.5;
+      min-width: 150px;
+    }
 
-      .meta-block p { font-size: 13px; margin: 2px 0; text-align: left; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 13px;
+      margin-top: 10px;
+      z-index: 2;
+    }
 
-      table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; }
-      th, td { border: 1px solid #111; padding: 8px; vertical-align: top; }
-      .header-row td { border: none; font-weight: 700; padding: 6px 8px; }
-      .header-row { text-align: right; }
+    th, td {
+      border: 1px solid #111;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
 
-      .service-name { font-weight: 700; }
-      .center { text-align: center; }
-      .right { text-align: right; }
+    .header-row td {
+      border: none;
+      font-weight: 600;
+      padding: 6px;
+    }
 
-      .desc-row {
-        border-left: 1px solid #111;
-        border-right: 1px solid #111;
-        border-bottom: 1px solid #111;
-        padding: 6px 8px;
-        background: #fafafa;
-        font-size: 12px;
-        color: #333;
-      }
+    .desc-row {
+      background: #fafafa;
+      font-size: 12px;
+      line-height: 1.4;
+      border-left: 1px solid #111;
+      border-right: 1px solid #111;
+      border-bottom: 1px solid #111;
+    }
 
-      .summary-row td { font-weight: 700; background: #fff; }
+    .summary-row td {
+      font-weight: 600;
+    }
 
-      section { margin-top: 12px; font-size: 13px; }
-      section h3 { margin-bottom: 8px; font-size: 15px; }
-      section ul { margin: 6px 0 12px 18px; }
+    section {
+      margin-top: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #222;
+    }
 
-      .contact-payment-info {
-        margin-top: 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-      }
-      .support { color: #c62828; font-weight: 700; }
-      .paymentNumber { font-weight: 700; }
+    section h3 {
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 700;
+    }
 
-      .sign { margin-top: 18px; text-align: left; }
+    section ul {
+      margin: 4px 0 8px 20px;
+    }
 
-      .invoice-footer {
-        margin-top: 18px;
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: flex-start;
-        font-weight: 700;
-      }
-      .invoice-footer .f-col {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .invoice-footer img { width: 24px; height: 24px; }
+    .contact {
+      margin-top: 6px;
+      font-weight: 600;
+      color: #c62828;
+    }
 
-      @page { size: A4; margin: 10mm; }
-      @media print {
-        html, body { background: white; }
-        .a4-page { box-shadow: none; padding: 12mm; border: 1px solid #111; }
-        header, section, footer { break-inside: avoid; }
-      }
+    .bank-info p {
+      margin: 2px 0;
+      font-size: 13px;
+      font-weight: 600;
+    }
 
-      @media (max-width: 820px) {
-        .a4-page { width: calc(100vw - 40px); padding: 12px; }
-        .first-red-section, .second-red-section { display: none; }
-      }
-    </style>
-  </head>
+    .signature {
+      margin-top: 10px;
+      font-size: 13px;
+    }
 
-  <body>
-    <div class="container">
-      <div class="first-red-section"></div>
+    /* ===== فوتر با تراز واقعی ===== */
+    footer {
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 400;
+      color: #222;
+    }
 
-      <div class="a4-page">
-        <header>
-          <div class="company-block">
-            {% if logo_data %}
-              <img class="logo" src="{{ logo_data }}" alt="logo" />
-            {% else %}
-              <div class="logo-placeholder">لوگو</div>
-            {% endif %}
-            <div class="company-text">
-              <h3>کانون آگهی و تبلیغات بازارسازان هوشمند پویا</h3>
-              <p>دارای مجوز رسمی از وزارت فرهنگ و ارشاد اسلامی</p>
-              <p>شماره مجوز: {{ object.license_number }}</p>
-            </div>
-          </div>
+    .footer-table {
+      border-collapse: collapse;
+      width: auto;
+    }
 
-          <div class="meta-block">
-            <p><strong>شماره فاکتور:</strong> {{ object.invoice_number }}</p>
-            <p><strong>تاریخ:</strong> {{ object.get_jalali_date }}</p>
-          </div>
-        </header>
+    .footer-table td {
+      vertical-align: middle;
+      padding: 2px 0;
+      border: none;
+    }
 
-        <table>
-          <tr class="header-row">
-            <td colspan="2">نام صنف: <strong>{{ object.business_name }}</strong></td>
-            <td colspan="2">مدیریت: <strong>{{ object.agency_manager }}</strong></td>
-          </tr>
-          <tr class="header-row">
-            <td colspan="4">آدرس: {{ object.address|default:"-" }}</td>
-          </tr>
-          <tr class="header-row">
-            <td colspan="4">تماس: {{ object.phone_number|default:"-" }}</td>
-          </tr>
+    .footer-icon {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+      margin-left: 5px;
+    }
 
-          <tr>
-            <th style="width:35%;">نام خدمات</th>
-            <th style="width:15%;">تعداد</th>
-            <th style="width:25%;">مبلغ واحد (ریال)</th>
-            <th style="width:25%;">مبلغ کل (ریال)</th>
-          </tr>
+    .footer-text {
+      padding-right: 4px;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="red-right"></div>
+    <div class="red-left"></div>
 
-          {% for s in services %}
-          <tr>
-            <td class="service-name">{{ s.get_service_name_display }}</td>
-            <td class="center">{{ s.quantity }}</td>
-            <td class="right">{{ s.amount|intcomma }}</td>
-            <td class="right">{{ s.total|intcomma }}</td>
-          </tr>
-          <tr>
-            <td colspan="4" class="desc-row">
-              {% if s.description %}
-                {{ s.description|linebreaksbr }}
-              {% else %}
-                —
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-
-          {% if not services %}
-          <tr>
-            <td colspan="4" style="text-align:center;">هیچ خدمتی ثبت نشده است</td>
-          </tr>
-          {% endif %}
-
-          <tr class="summary-row">
-            <td colspan="2" style="text-align:right">کد مشاور: -</td>
-            <td colspan="2" style="text-align:right"><strong>جمع فاکتور: {{ total|intcomma }} ریال</strong></td>
-          </tr>
-        </table>
-
-        <section>
-          <h3>شرح خدمات:</h3>
-          <ul>
-            <li>با دریافت خدمات می‌توانید از ساعت ۱۰ صبح الی ۱۸ بعدازظهر با مشاورین بازرگانی ما در زمینه بهبود فروش و بازاریابی برای کسب و کارتان مشورت بگیرید.</li>
-            <li>تمامی موارد ذکر شده پس از واریز وجه، در مدت ۲۰ روز کاری، نشر و به شما نمایش داده خواهد شد.</li>
-          </ul>
-
-          <div class="contact-payment-info">
-            <p class="support">تماس با پشتیبانی (واتساپ): <strong>09923823039</strong></p>
-            <p class="paymentNumber">شماره کارت: <strong>5041-7210-4950-9285</strong> (علیرضا حسینعلی - بانک رسالت)</p>
-            <p class="paymentNumber">شماره شبا: <strong>IR970700001000115568446001</strong> (علیرضا حسینعلی)</p>
-          </div>
-
-          <p class="sign">امضا تحویل‌گیرنده:</p>
-        </section>
-
-        <footer class="invoice-footer">
-          <div class="f-col">
-            {% if phone_icon %}<img src="{{ phone_icon }}" alt="phone" />{% endif %}
-            <p>44782351 - 44780156</p>
-          </div>
-          <div class="f-col">
-            {% if msg_icon %}<img src="{{ msg_icon }}" alt="msg" />{% endif %}
-            <p>www.asnafshahr.com</p>
-          </div>
-          <div class="f-col address-col">
-            {% if telegram_icon %}<img src="{{ telegram_icon }}" alt="telegram" />{% endif %}
-            <p>تهران، کیلومتر ۱۴ جاده مخصوص، خیابان ۵۵ شهرک غزالی، نبش خیابان توران پشتی، پلاک ۱</p>
-          </div>
-        </footer>
+    <header>
+      <div class="company-block">
+        <img src="{{ logo_data }}" class="logo" alt="logo">
+        <div class="company-text">
+          <h3>کانون آگهی و تبلیغات بازارسازان هوشمند پویا</h3>
+          <p>دارای مجوز رسمی از وزارت فرهنگ و ارشاد اسلامی</p>
+          <p>شماره مجوز: {{ object.license_number }}</p>
+        </div>
       </div>
+      <div class="meta-info">
+        <p><strong>شماره فاکتور:</strong> {{ object.invoice_number }}</p>
+        <p><strong>تاریخ:</strong> {{ object.get_jalali_date }}</p>
+      </div>
+    </header>
 
-      <div class="second-red-section"></div>
-    </div>
-  </body>
+    <table>
+      <tr class="header-row">
+        <td colspan="2">نام صنف: <strong>{{ object.business_name }}</strong></td>
+        <td colspan="2">مدیریت: <strong>{{ object.agency_manager }}</strong></td>
+      </tr>
+      <tr class="header-row">
+        <td colspan="4">آدرس: {{ object.address|default:"-" }}</td>
+      </tr>
+      <tr class="header-row">
+        <td colspan="4">تماس: {{ object.phone_number|default:"-" }}</td>
+      </tr>
+
+      <tr>
+        <th style="width:35%;">نام خدمات</th>
+        <th style="width:15%;">تعداد</th>
+        <th style="width:25%;">مبلغ واحد (ریال)</th>
+        <th style="width:25%;">مبلغ کل (ریال)</th>
+      </tr>
+
+      {% for s in services %}
+      <tr>
+        <td><strong>{{ s.get_service_name_display }}</strong></td>
+        <td style="text-align:center;">{{ s.quantity }}</td>
+        <td style="text-align:right;">{{ s.amount|intcomma }}</td>
+        <td style="text-align:right;">{{ s.total|intcomma }}</td>
+      </tr>
+      {% if s.description %}
+      <tr>
+        <td colspan="4" class="desc-row">{{ s.description|linebreaksbr }}</td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+
+      {% if not services %}
+      <tr><td colspan="4" style="text-align:center;">هیچ خدمتی ثبت نشده است</td></tr>
+      {% endif %}
+
+      <tr class="summary-row">
+        <td colspan="2" style="text-align:right;">کد مشاور: -</td>
+        <td colspan="2" style="text-align:right;">جمع فاکتور: <strong>{{ total|intcomma }} ریال</strong></td>
+      </tr>
+    </table>
+
+    <section>
+      <h3>شرح خدمات:</h3>
+      <ul>
+        <li>با دریافت خدمات می‌توانید از ساعت ۱۰ صبح الی ۱۸ بعدازظهر با مشاورین بازرگانی ما در زمینه بهبود فروش و بازاریابی برای کسب و کارتان مشورت بگیرید.</li>
+        <li>تمامی موارد ذکر شده پس از واریز وجه در مدت ۲۰ روز کاری نشر و به شما نمایش داده خواهد شد.</li>
+      </ul>
+
+      <div class="contact">تماس با پشتیبانی (واتساپ): <strong>09923823039</strong></div>
+      <div class="bank-info">
+        <p>شماره کارت: <strong>5041‑7210‑4950‑9285</strong> (علیرضا حسینعلی ‑ بانک رسالت)</p>
+        <p>شماره شبا: <strong>IR970700001000115568446001</strong> (علیرضا حسینعلی)</p>
+      </div>
+      <div class="signature">امضا تحویل‌گیرنده:</div>
+    </section>
+
+    <footer>
+      <table class="footer-table">
+        <tr>
+          <td><img src="{{ telegram_icon }}" class="footer-icon" alt="telegram"></td>
+          <td class="footer-text">تهران، کیلومتر ۱۴ جاده مخصوص، خیابان ۵۵ شهرک غزالی، نبش خیابان توران پشتی، پلاک ۱</td>
+        </tr>
+        <tr>
+          <td><img src="{{ msg_icon }}" class="footer-icon" alt="msg"></td>
+          <td class="footer-text">www.asnafshahr.com</td>
+        </tr>
+        <tr>
+          <td><img src="{{ phone_icon }}" class="footer-icon" alt="phone"></td>
+          <td class="footer-text">44782351 ‑ 44780156</td>
+        </tr>
+      </table>
+    </footer>
+
+  </div>
+</body>
 </html>
