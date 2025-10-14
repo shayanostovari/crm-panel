@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'dashboard',
     'invoice',
     'django.contrib.humanize',
+    'sheets',
 ]
 
 MIDDLEWARE = [

@@ -1,7 +1,7 @@
 # invoice/urls.py
 from django.urls import path
-from .views import InvoicePDFView
+from .views import generate_invoice_pdf
 
 urlpatterns = [
-    path("pdf/<int:pk>/", InvoicePDFView.as_view(), name="invoice-pdf"),
+    path("pdf/<int:pk>/", generate_invoice_pdf, name="invoice-pdf"),
 ]
