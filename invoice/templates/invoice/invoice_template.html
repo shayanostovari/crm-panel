@@ -1,32 +1,32 @@
 {% load static %}
 {% load humanize %}
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>فاکتور شماره {{ object.invoice_number }}</title>
-    <link rel="stylesheet" href="{% static 'invoice/css/invoice_pdf.css' %}">
-</head>
-<body>
+<html lang="fa" dir="rtl" style="margin-right: -30px; margin-left: -30px;">
+    <main class="mainnew">
+<div class="redright" ></div>
+<div class="redleft"></div>
 
-<div class="red-top"></div>
-<div class="red-left"></div>
-
+<img src="{{ logo_data }}" alt="لوگو"  class="logo">
 <div class="header">
-    <img src="{{ logo_data }}" alt="لوگو" class="logo">
-    <h1>کانون آگهی و خدمات بازارسازان هوشمند پویا</h1>
-    <p>مرکز تخصصی تبلیغات و بازاریابی دیجیتال <br> به شناسه ملی 14008364351</p>
+    <div id="row" class="headercontent" >
+        <p class="headertext">کانون آگهی و خدمات بازارسازان هوشمند پویا</p>
+        <p class="headertext">شماره فاکتور: {{ object.invoice_number }}</p>
+    </div>
+    <div class="headercontent">
+        <p class="headertext"> دارای مجوز رسمی از وزارت فرهنگ و ارشاد اسالمی</p>
+        <p class="headertext">تاریخ: {{ object.date_created|date:"Y/m/d" }}</p>
+    </div>
+    <p class="headertext" style="margin-top: -5px;">شماره مجوز رسمی:00000</p>
 </div>
 
-<div class="info-block">
-    <p>شماره فاکتور: {{ object.invoice_number }}</p>
-    <p>تاریخ: {{ object.date_created|date:"Y/m/d" }}</p>
+<p>مرکز تخصصی تبلیغات و بازاریابی دیجیتال <br> به شناسه ملی 14008364351</p>
+<div >
     <p>نام سفارش‌دهنده: {{ object.business_name }}</p>
     <p>مدیریت: {{ object.agency_manager }}</p>
     <p>شماره تماس: {{ object.phone }}</p>
 </div>
 
-<table class="services">
+<table >
     <thead>
         <tr>
             <th>نام خدمت</th>
@@ -45,18 +45,17 @@
     </tbody>
 </table>
 
-<div class="footer">
+<div >
     <p>شرح خدمات: {{ object.description }}</p>
-    <p class="brand">شماره کارت (بانک رسالت): 5041-7210-4950-9285 (علیرضا حسین علی)</p>
+    <p >شماره کارت (بانک رسالت): 5041-7210-4950-9285 (علیرضا حسین علی)</p>
     <p>شماره حساب بانکی: 3288536235 | شماره شبا: IR870700000001155894600001</p>
     <p>آدرس: تهران، کیلومتر ۱۴ جاده مخصوص کرج – خیابان ...</p>
-    <div class="icons">
+    <div >
         <img src="{{ address_icon }}" alt="آدرس">
         <img src="{{ phone_icon }}" alt="تلفن">
         <img src="{{ website_icon }}" alt="وبسایت">
         <img src="{{ instagram_icon }}" alt="اینستاگرام">
     </div>
 </div>
-
-</body>
+</main>
 </html>

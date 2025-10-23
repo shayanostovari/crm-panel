@@ -49,7 +49,10 @@ INSTALLED_APPS = [
     'invoice',
     'django.contrib.humanize',
     'sheets',
+    'task',
 ]
+ASGI_APPLICATION = 'panel.asgi.application'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -150,7 +153,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
 
 
 #users auth
