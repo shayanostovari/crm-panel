@@ -30,9 +30,10 @@ class Invoice(models.Model):
     address = models.TextField(verbose_name="آدرس")
     phone_numbers = models.TextField(verbose_name="شماره تلفن")
     description = models.TextField(default="-", null=True, blank=True, verbose_name="توضیحات")
+    send_time = models.TimeField(null=True, blank=True, verbose_name="ساعت ارسال")
     font_size = models.IntegerField(
         choices=FONT_SIZE_CHOICES,
-        default=10,
+        default=11,
         verbose_name="اندازه فونت (PDF)"
     )
     created_at = models.DateTimeField(auto_now_add=True)
