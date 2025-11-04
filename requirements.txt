@@ -23,6 +23,7 @@ incremental==24.7.2
 jalali_core==1.0.0
 jdatetime==5.2.0
 Markdown==3.9
+pdf2image==1.17.0
 pillow==11.3.0
 psycopg-binary==3.2.10
 psycopg2-binary==2.9.10
